@@ -17,7 +17,7 @@ impl Vec3 {
     pub fn length(self) -> f64 {
 	self.length_sqr().sqrt()
     }
-    pub fn dot(self, other: Vec3) -> f64 {
+    pub fn dot(self, other: &Vec3) -> f64 {
 	self.x * other.x + self.y * other.y + self.z * other.z
     }
     pub fn cross(self, other: Vec3) -> Self {
@@ -28,6 +28,16 @@ impl Vec3 {
     pub fn unit_vector(self) -> Self {
 	self / self.length()
     }
+
+    pub const ZEROES: Self = Vec3 { x: 0.0, y: 0.0, z: 0.0 };
+    pub const ONES: Self = Vec3 { x: 1.0, y: 1.0, z: 1.0 };
+}
+
+pub fn zeros() -> Vec3 {
+    Vec3::new(0.0, 0.0, 0.0)
+}
+pub fn ones() -> Vec3 {
+    Vec3::new(1.0, 1.0, 1.0)
 }
 
 impl Index<u32> for Vec3 {
