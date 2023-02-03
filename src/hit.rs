@@ -1,22 +1,27 @@
-#[path = "./vec3.rs"] mod vec3;
 use crate::vec3::Vec3;
-
-#[path = "./ray.rs"] mod ray;
 use crate::ray::Ray;
+use crate::material::Material;
 
-#[derive(Debug, Clone, Copy)]
-pub struct HitRecord {
+use std::boxed::Box;
+
+/*
+ * HIT
+ */
+
+// #[derive(Debug, Clone, Copy)]
+pub struct HitRecord<T: Material> {
     pub point: Vec3,
     pub normal: Vec3,
     pub t: f64,
     pub frontface: bool,
+    pub mat: Option<Box<T>>
 }
 
-pub trait Hittable {
-    fn hit(&self, r: &Ray, tmin: f64, tmax: f64, rec: &mut HitRecord) -> bool;
+pub trait Hittable<T: Material> {
+    fn hit(&self, r: &Ray, tmin: f64, tmax: f64, rec: &mut HitRecord<T>) -> bool;
 }
 
-impl HitRecord {
+impl<T: Material> HitRecord<T> {
     pub fn setfacenormal(&mut self, r: &Ray, outward_normal: &Vec3) {
 	self.frontface = r.dir.dot(outward_normal) < 0.0;
 	self.normal = {
@@ -26,9 +31,5 @@ impl HitRecord {
 		-*outward_normal
 	    }
 	}
-    }
-
-    pub fn default() -> Self {
-	HitRecord { point: Vec3::ZEROES, normal: Vec3::ZEROES, t: 0.0, frontface: false }
     }
 }

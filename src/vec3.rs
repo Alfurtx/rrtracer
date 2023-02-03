@@ -1,4 +1,5 @@
 use std::ops::{Add, AddAssign, Neg, Sub, Mul, MulAssign, Div, DivAssign, Index};
+use rand::prelude::*;
 
 #[derive(Debug, Copy, Clone)]
 pub struct Vec3 {
@@ -27,6 +28,53 @@ impl Vec3 {
     }
     pub fn unit_vector(self) -> Self {
 	self / self.length()
+    }
+
+    pub fn newrandom() -> Self {
+	Vec3::new(
+	    rand::random::<f64>(),
+	    rand::random::<f64>(),
+	    rand::random::<f64>()
+	)
+    }
+    pub fn newrandom_range(min: f64, max: f64) -> Self {
+	let mut rng = rand::thread_rng();
+
+	Vec3 {
+	    x: rng.gen_range(min..max),
+	    y: rng.gen_range(min..max),
+	    z: rng.gen_range(min..max)
+	}
+    }
+
+    pub fn random_in_unit_sphere() -> Self {
+	loop {
+	    let p = Vec3::newrandom_range(-1.0, 1.0);
+	    if p.length_sqr() >= 1.0 { continue; }
+	    return p;
+	}
+    }
+
+    pub fn rand_unit_vec() -> Self {
+	Vec3::random_in_unit_sphere().unit_vector()
+    }
+
+    pub fn rand_in_hemisphere(normal: &Vec3) -> Self {
+	let inusphere = Vec3::random_in_unit_sphere();
+	if inusphere.dot(normal) > 0.0 {
+	    inusphere
+	} else {
+	    -inusphere
+	}
+    }
+
+    pub fn near_zero(&self) -> bool {
+	let s = 1e-8;
+	self.x.abs() < s && self.y.abs() < s && self.z.abs() < s
+    }
+
+    pub fn reflect(v: &Self, n: &Self) -> Self {
+	*v - (*n * 2.0 * v.dot(n))
     }
 
     pub const ZEROES: Self = Vec3 { x: 0.0, y: 0.0, z: 0.0 };

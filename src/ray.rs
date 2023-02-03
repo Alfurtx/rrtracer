@@ -8,10 +8,7 @@ pub struct Ray {
 }
 
 impl Ray {
-    pub fn new(origin: Vec3, direction: Vec3) -> Ray {
-	Ray { orig: origin, dir: direction}
-    }
-    pub fn at(self, t: f64) -> Vec3 {
-	self.orig + self.dir * t
-    }
+    pub fn new(origin: Vec3, direction: Vec3) -> Ray { Ray { orig: origin, dir: direction} }
+    pub fn new_default() -> Ray { Ray { orig: Vec3::ZEROES, dir: Vec3::ZEROES } }
+    pub fn at(&self, t: f64) -> Vec3 { self.orig + self.dir * t }
 }
