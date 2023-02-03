@@ -1,18 +1,16 @@
-#[path = "./vec3.rs"] mod vec3;
-#[path = "./hit.rs"] mod hit;
-#[path = "./ray.rs"] mod ray;
-
 use crate::hit::{Hittable, HitRecord};
 use crate::vec3::Vec3;
 use crate::ray::Ray;
+use crate::material::Material;
 
-pub struct Sphere {
+pub struct Sphere<T: Material> {
     pub center: Vec3,
     pub radius: f64,
+    pub mat: Option<Box<T>>
 }
 
-impl Hittable for Sphere {
-    fn hit(&self, r: &Ray, tmin: f64, tmax: f64, rec: &mut HitRecord) -> bool {
+impl<T: Material> Hittable<T> for Sphere<T> {
+    fn hit(&self, r: &Ray, tmin: f64, tmax: f64, rec: &mut HitRecord<T>) -> bool {
 	let oc = r.orig - self.center;
 	let a = r.dir.length_sqr();
 	let halfb = oc.dot(&r.dir);
@@ -29,10 +27,13 @@ impl Hittable for Sphere {
 	    }
 	}
 
+	let res = self.mat.unwrap();
+
 	rec.t = root;
 	rec.point = r.at(rec.t);
 	let outwnormal = (rec.point - self.center) / self.radius;
 	rec.setfacenormal(r, &outwnormal);
+	rec.mat = self.mat;
 
 	return true;
     }
